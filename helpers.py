@@ -1,59 +1,63 @@
 def getTemperatures(document):
-    tempList = []
-    temperatures = document.find('div', {"class": "temperatures"}).findAll('div', {"class": "four columns alpha"})
-    for temp in temperatures:
-        titles = temp.find('span').findChildren()
-        title = titles[0].text
-        subtitle = titles[1].text
+    conditions = document.find_all('div', {"class": "condition__text"})
+    temperatureList = []
+    for condition in conditions:
+        if condition.find('span', {"data-wsid": "temperature"}):
+            title = condition.find("dt", {"class": "condition__term"}).text
+            titleParts = title.split('(')
+            label=titleParts[0].strip().title()
+            elevation= titleParts[1].replace(')','').strip().lower()
+            value = condition.find('span', {"data-wsid": "temperature"}).text.strip()
 
-        celcius = temp.findAll('strong')[1].text
-        fahrenheit = temp.findAll('small')[1].text
+            tempObj = {
+                "label": label,
+                "elevation": elevation,
+                "value": value,
+            }
+            temperatureList.append(tempObj)
+    
+    return temperatureList
 
-        tempDict = {
-            "title": title,
-            "subtitle": subtitle,
-            "celcius": celcius,
-            "fahrenheit": fahrenheit
-        }
-        tempList.append(tempDict)
-    return tempList
-
-def getNewSnow(document):
-    newsnow = document.find('div', {"class": "new-snow"})
-    snowCms = newsnow.findAll('strong')[1].text
-
-    snow = {
-        "title": "Fresh snow",
-        "cms": snowCms,
+def getSnow(document):
+    allSnowAmounts = document.find_all('div', { "class": "snow-report__amount"})
+    lastHour = {}
+    last24Hours = {}
+    base = {}
+    for amount in allSnowAmounts:
+        title = amount.find('h2', {"class": "snow-report__title"}).text.lower()
+        value = amount.find('span', { "class": "value"}).text
+        if title == "last hour":
+            lastHour = {
+                "title": "Last hour",
+                "value": value
+            }
+        if title == "24 hours":
+            last24Hours = {
+                "title": "24 hours",
+                "value": value
+            }
+        if title == "base depth":
+            base = {
+                "title": "Base depth",
+                "value": value
+            }
+    return {
+        "lastHour": lastHour,
+        "last24Hours": last24Hours,
+        "base": base
     }
-    return snow
 
 def getWind(document):
-    wind = document.find('div', {"class": "wind"}).findChild()
-    title = wind.find('span').findChild().text
-    value = wind.contents[2].strip()
-    windDict = {
-        "title": title,
-        "value": value
-    }
-    return windDict
+    conditions = document.find_all('div', {"class": "condition__text"})
+    windObj = {}
+    for condition in conditions:
+        if condition.find('span', {"data-wsid": "wind"}):
+            direction = condition.find("span", {"data-wsid": "direction"}).text
+            value = condition.find('span', {"data-wsid": "wind"}).text.strip()
 
-def getBase(document):
-    base = document.find('div', {"class": "four columns center border-box border-right"}).findChild()
-    title = base.find('span').findChild().text
-    value = base.findAll('strong')[1].text
-    baseDict = {
-        "title": title,
-        "value": value
-    }
-    return baseDict
-
-def getLastUpdatedDate(document):
-    lastUpdated = document.find('p', {"class": "eight columns omega text-right"})
-    date = lastUpdated.find('strong').text
-    dateObj = {
-        "title": "Date updated",
-        "date": date
-    }
-    return dateObj
-    
+            windObj = {
+                "label": "Wind speed",
+                "direction": direction,
+                "value": value,
+            }
+    return windObj
