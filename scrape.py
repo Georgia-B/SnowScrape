@@ -1,12 +1,10 @@
-import requests
-import urllib.request
-import time
 import json
+import boto3
 from bs4 import BeautifulSoup
-import helpers
 import asyncio
 from playwright.async_api import async_playwright
 from datetime import datetime
+import helpers
 
 async def main():
     url = 'https://www.revelstokemountainresort.com/mountain/conditions/snow-report'
@@ -40,9 +38,13 @@ async def main():
     }
     print(data)
 
-    with open('data.json', 'w') as outfile:
-        json.dump(data, outfile, indent=4)
+    # with open('data.json', 'w') as outfile:
+    #     json.dump(data, outfile, indent=4)
+    
+    s3 = boto3.resource('s3')
+    object = s3.Object('revypow', 'data.json')
+    object.put(Body=(bytes(json.dumps(data, indent=4).encode('UTF-8'))))
 
 
-if __name__ == "__main__":
+def lambda_handler(event, context):
     asyncio.run(main())

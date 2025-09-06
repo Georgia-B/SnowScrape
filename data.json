@@ -1,0 +1,42 @@
+{
+    "temperatures": [
+        {
+            "label": "Subpeak",
+            "elevation": "2,340m",
+            "value": "15"
+        },
+        {
+            "label": "The Ripper",
+            "elevation": "1,950m",
+            "value": "19"
+        },
+        {
+            "label": "Village Base",
+            "elevation": "512m",
+            "value": "25"
+        }
+    ],
+    "wind": {
+        "label": "Wind speed",
+        "direction": "N",
+        "value": "6"
+    },
+    "snow": {
+        "lastHour": {
+            "title": "Last hour",
+            "value": "N/A"
+        },
+        "last24Hours": {
+            "title": "24 hours",
+            "value": "N/A"
+        },
+        "base": {
+            "title": "Base depth",
+            "value": "N/A"
+        }
+    },
+    "dateUpdated": {
+        "title": "Last updated",
+        "date": "06 September 2025, 01:22 PM"
+    }
+}
